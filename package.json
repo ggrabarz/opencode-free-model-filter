@@ -1,0 +1,30 @@
+{
+  "name": "@ggrabarz/opencode-free-model-filter",
+  "version": "1.0.0",
+  "description": "OpenCode plugin that filters models to show only free (0-cost) models from all providers",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "opencode",
+    "plugin",
+    "model",
+    "filter",
+    "free"
+  ],
+  "author": "ggrabarz",
+  "license": "MIT",
+  "peerDependencies": {
+    "@opencode/plugin": "^2.0.0"
+  },
+  "devDependencies": {
+    "@opencode/plugin": "^2.0.0",
+    "typescript": "^5.0.0"
+  },
+  "files": [
+    "dist"
+  ]
+}
