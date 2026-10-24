@@ -1,30 +1,58 @@
 {
+  "$schema": "https://json.schemastore.org/package.json",
   "name": "@ggrabarz/opencode-free-model-filter",
-  "version": "1.0.0",
-  "description": "OpenCode plugin that filters models to show only free (0-cost) models from all providers",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "scripts": {
-    "build": "tsc",
-    "prepare": "npm run build"
+  "version": "2.0.0",
+  "description": "OpenCode plugin: hides paid models by default and toggles the model picker between free-only and paid-only with Ctrl+L",
+  "type": "module",
+  "license": "MIT",
+  "author": {
+    "name": "ggrabarz"
   },
+  "homepage": "https://github.com/ggrabarz/opencode-free-model-filter#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/ggrabarz/opencode-free-model-filter.git"
+  },
+  "bugs": "https://github.com/ggrabarz/opencode-free-model-filter/issues",
   "keywords": [
     "opencode",
-    "plugin",
+    "opencode-plugin",
+    "opencode-tui",
     "model",
     "filter",
     "free"
   ],
-  "author": "ggrabarz",
-  "license": "MIT",
-  "peerDependencies": {
-    "@opencode/plugin": "^2.0.0"
-  },
-  "devDependencies": {
-    "@opencode/plugin": "^2.0.0",
-    "typescript": "^5.0.0"
+  "exports": {
+    ".": "./index.ts",
+    "./tui": "./tui.tsx",
+    "./classify": "./src/classify.ts",
+    "./rpc": "./src/rpc.ts"
   },
   "files": [
-    "dist"
-  ]
+    "index.ts",
+    "src",
+    "tui.tsx",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "bun test",
+    "test:e2e": "bun test test/tui.e2e.test.tsx",
+    "typecheck": "bunx tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@opencode/plugin": "2.1.4"
+  },
+  "devDependencies": {
+    "@lydell/node-pty": "^1.2.0-beta.15",
+    "@opencode/client": "2.1.4",
+    "@opencode/theme": "2.1.4",
+    "@opentui/core": "0.6.6",
+    "@opentui/solid": "0.6.6",
+    "@tsconfig/bun": "^1.0.11",
+    "@types/bun": "^1.4.4",
+    "@xterm/headless": "^6.0.0",
+    "effect": "4.0.1",
+    "solid-js": "1.9.15",
+    "typescript": "^5.9.0"
+  }
 }

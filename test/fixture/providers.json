@@ -1,0 +1,138 @@
+{
+  "providers": {
+    "fixture-free": {
+      "name": "Fixture Free",
+      "package": "@opencode/ai/providers/openai-compatible",
+      "settings": {
+        "baseURL": "http://127.0.0.1:31415/v1",
+        "apiKey": "fixture"
+      },
+      "models": {
+        "auto": {
+          "name": "Free Auto Router",
+          "capabilities": {
+            "tools": true,
+            "input": [
+              "text"
+            ],
+            "output": [
+              "text"
+            ]
+          }
+        },
+        "gpt-5-mini": {
+          "name": "GPT-5 Mini",
+          "capabilities": {
+            "tools": true,
+            "input": [
+              "text"
+            ],
+            "output": [
+              "text"
+            ]
+          }
+        }
+      }
+    },
+    "fixture-paid": {
+      "name": "Fixture Paid",
+      "package": "@opencode/ai/providers/openai-compatible",
+      "settings": {
+        "baseURL": "https://paid.example.com/v1",
+        "apiKey": "fixture"
+      },
+      "models": {
+        "auto": {
+          "name": "Paid Auto Router",
+          "capabilities": {
+            "tools": true,
+            "input": [
+              "text"
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "cost": {
+            "input": 5,
+            "output": 15,
+            "cache": {
+              "read": 1,
+              "write": 2
+            }
+          }
+        },
+        "chat": {
+          "name": "Paid Chat",
+          "capabilities": {
+            "tools": true,
+            "input": [
+              "text"
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "cost": {
+            "input": 3,
+            "output": 12,
+            "cache": {
+              "read": 1,
+              "write": 2
+            }
+          }
+        }
+      }
+    },
+    "fixture-zero": {
+      "name": "Fixture Zero",
+      "package": "@opencode/ai/providers/openai-compatible",
+      "settings": {
+        "baseURL": "https://zero.example.com/v1",
+        "apiKey": "fixture"
+      },
+      "models": {
+        "free-router": {
+          "name": "Zero Cost Router",
+          "capabilities": {
+            "tools": true,
+            "input": [
+              "text"
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          }
+        },
+        "free-chat": {
+          "name": "Zero Cost Chat",
+          "capabilities": {
+            "tools": true,
+            "input": [
+              "text"
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cache": {
+              "read": 0,
+              "write": 0
+            }
+          }
+        }
+      }
+    }
+  }
+}
