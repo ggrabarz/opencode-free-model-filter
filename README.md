@@ -79,6 +79,25 @@ environment variable on the server:
 $env:OPENCODE_FREE_MODEL_FILTER_PROVIDERS = "my-gateway,another-free-gateway"
 ```
 
+
+### `liveness` (default: false)
+
+`liveness: true` additionally queries each provider's `/models` endpoint (5 min TTL, 5 s
+per-request timeout) and disables configured models the provider no longer serves.
+
+It is off by default. On the box where this plugin runs, enabling it took the
+background service down: `model.reload()` publishes `model.updated`, the plugin
+subscribes to `model.updated`, and every liveness result changed the catalog again,
+so the cycle never terminated and the host stopped answering HTTP within 15 s.
+The plugin now enforces three rules: a rebuild that produces the catalog the last
+reload published does not reload; fetches are never started from inside the model
+transform; and a relocation cap (8 per 10 s) stops reacting rather than starving
+the host. Turn it on only where the provider endpoints are reachable.
+
+```json
+{ "plugins": [ { "package": "github:ggrabarz/opencode-free-model-filter", "options": { "liveness": true } } ] }
+```
+
 The server plugin also accepts plugin options `freeProviders: string[]` and
 `defaultMode: "free" | "paid" | "all"` when it is loaded as a configured
 package. Local directory discovery has no options; the environment variable is

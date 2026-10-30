@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
   "name": "@ggrabarz/opencode-free-model-filter",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "OpenCode plugin: hides paid models by default and toggles the model picker between free-only and paid-only with Ctrl+L",
   "type": "module",
   "license": "MIT",
