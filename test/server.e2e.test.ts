@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test"
-import { readFile } from "node:fs/promises"
+import { mkdir, readFile, writeFile } from "node:fs/promises"
+import path from "node:path"
 import {
   FREE_FIXTURE_IDS,
   PAID_FIXTURE_IDS,
@@ -215,4 +216,74 @@ describe.skipIf(skip)("server catalog filtering", () => {
     expect(fixtureIDs(await listModels(server, iso.project))).toEqual([...FREE_FIXTURE_IDS].sort())
   })
 })
+
+/**
+ * Mirrors how `freellmapi-models` grows the catalog in the wild: a second
+ * local plugin (named to load after the filter) registers an extra free model
+ * through its own model transform. The filter must bucket that model too, so
+ * it never appears in the paid-only view.
+ */
+const LATE_MODEL_PLUGIN = `
+export default {
+  id: "zlate-models",
+  async setup(ctx) {
+    await ctx.model.transform((editor) => {
+      editor.update("fixture-zero", "late-added", (draft) => {
+        draft.name = "Late Added Chat"
+        draft.cost = [{ input: 0, output: 0, cache: { read: 0, write: 0 } }]
+        draft.capabilities = { ...(draft.capabilities ?? {}), tools: false, input: ["text"], output: ["text"] }
+      })
+    })
+  },
+}
+`
+
+describe.skipIf(skip)("catalog filtering covers models registered by later plugins", () => {
+  let iso: Isolated
+  let server: Server
+
+  beforeAll(async () => {
+    iso = await createIsolated()
+    const dir = path.join(iso.project, ".opencode", "plugins", "zlate-models")
+    await mkdir(dir, { recursive: true })
+    await writeFile(path.join(dir, "index.ts"), LATE_MODEL_PLUGIN)
+    server = await startServer(iso)
+    await waitForPlugin(server, iso.project)
+  })
+
+  afterAll(async () => {
+    await server?.stop()
+    await iso?.dispose()
+  })
+
+  test("the free view includes the late-registered free model", async () => {
+    const ids = await eventually(
+      async () => fixtureIDs(await listModels(server, iso.project)),
+      (v) => v.includes("fixture-zero/late-added"),
+    )
+    expect(ids).toContain("fixture-zero/late-added")
+  })
+
+  test("the paid view excludes the late-registered free model", async () => {
+    await callRpc(server, iso.project, "setMode", { mode: "paid" })
+    const ids = await eventually(
+      async () => fixtureIDs(await listModels(server, iso.project)),
+      (v) => v.length > 0,
+    )
+    expect(ids).not.toContain("fixture-zero/late-added")
+    expect(ids).toEqual([...PAID_FIXTURE_IDS].sort())
+    await callRpc(server, iso.project, "setMode", { mode: "free" })
+  })
+})
+
+async function eventually<T>(read: () => Promise<T>, done: (value: T) => boolean, timeoutMs = 15_000): Promise<T> {
+  const deadline = Date.now() + timeoutMs
+  let last: T | undefined
+  while (Date.now() < deadline) {
+    last = await read()
+    if (done(last)) return last
+    await Bun.sleep(250)
+  }
+  return last as T
+}
 
